@@ -1,0 +1,8 @@
+class Solution:
+  def numberOfSubstrings(self, s: str) -> int:
+    l = {'a':-1, 'b':-1, 'c':-1}
+    ans = 0
+    for i, ch in enumerate(s):
+      l[ch] = i
+      ans += min(l.values()) + 1
+    return ans
