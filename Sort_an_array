@@ -1,0 +1,62 @@
+import java.util.concurrent.RecursiveAction;
+
+class Solution {
+
+    public static class Sort extends RecursiveAction {
+        private int[] a;
+        private int left;
+        private int right;
+
+        public Sort(int[] a, int left, int right) {
+            this.a = a;
+            this.left = left;
+            this.right = right;
+        }
+
+        @Override
+        protected void compute() {
+            int m = (left + right) / 2;
+            if (m >= left + 1) {
+                Sort leftHalf = new Sort(a, left, m);
+                leftHalf.fork();
+                Sort rightHalf = new Sort(a, m+1, right);
+                rightHalf.compute();
+                leftHalf.join();
+            }
+            merge(a, left, right, m);
+        }
+
+        private void merge(int[] a, int left, int right, int mid) {
+            if (left == right || left + 1 == right && a[left] <= a[right])
+                return;
+            // let l point to last element of left half, r point to last element of right half
+            int l = mid, r = right;
+            // skip possible max elements
+            while (l < r && a[l] <= a[r])
+                r -= 1;
+            // size of remaining right half
+            int size = r-l;
+            int[] buf = new int[size];
+            for (int i = 0; i < size; i++){
+                buf[i] = a[mid + 1 + i];
+            }
+            int i = size-1;
+            while (i >= 0) {
+                if (l >= left && a[ l] >buf[i]) {
+                    a[r] = a[l];
+                    l -= 1;
+                } else {
+                    a[r] = buf[i];
+                    i -= 1;
+                }
+                r -= 1;
+            }
+        }
+    }
+
+    public int[] sortArray(int[] a) {
+        ForkJoinPool threadPool = ForkJoinPool.commonPool();
+        threadPool.invoke(new Sort(a, 0, a.length-1));
+        return a;
+    }
+}
