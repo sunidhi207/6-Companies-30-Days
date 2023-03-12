@@ -29,6 +29,10 @@ class GfG
         int num_sum=num1*den2+num2*den1;
         int den_sum=den1*den2;
         int i;
+        if(den1==den2)
+        {
+            System.out.println(num1+num2+"/"+den1);
+        }
      for(i=2;i<=99;i++)
             {
                 if(num_sum%i==0 && den_sum%i==0)
